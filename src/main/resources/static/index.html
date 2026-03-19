@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 목록</title>
+</head>
+
+<body>
+
+<h1>게시글 목록</h1>
+
+<button onclick="goCreate()">글 작성</button>
+
+<ul id="postList"></ul>
+
+<div id="pagination"></div>
+
+<script>
+
+    let currentPage = 0;
+
+    async function getPosts(page = 0) {
+
+        try {
+            const res = await fetch(`/api/posts?page=${page}&size=10`);
+            const data = await res.json();
+
+            const posts = data.data.content;
+
+            const list = document.getElementById("postList");
+            list.innerHTML = "";
+
+            posts.forEach(post => {
+                const li = document.createElement("li");
+
+                li.innerHTML = `
+                <a href="detail.html?id=${post.id}">
+                    ${post.title}
+                </a>
+            `;
+
+                list.appendChild(li);
+            });
+
+            renderPagination(data.data);
+
+        } catch (error) {
+            console.error("게시글 조회 실패:", error);
+        }
+    }
+
+    function renderPagination(pageData) {
+
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+
+        for (let i = 0; i < pageData.totalPages; i++) {
+
+            const button = document.createElement("button");
+
+            button.innerText = i + 1;
+
+            button.onclick = () => {
+                currentPage = i;
+                getPosts(i);
+            };
+
+            pagination.appendChild(button);
+        }
+    }
+
+    function goCreate(){
+        window.location.href = "create.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        getPosts(currentPage);
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 작성</title>
+</head>
+
+<body>
+
+<h1>게시글 작성</h1>
+
+<input id="title" placeholder="제목"><br><br>
+<textarea id="content" placeholder="내용"></textarea><br><br>
+
+<button onclick="createPost()">작성</button>
+
+<script>
+
+    async function createPost(){
+
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
+
+        const res = await fetch("http://localhost:8080/api/posts",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                title:title,
+                content:content
+            })
+        });
+
+        const data = await res.json();
+
+        alert("작성 완료");
+
+        location.href="index.html";
+    }
+
+</script>
+
+</body>
+</html>

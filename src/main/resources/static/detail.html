@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 상세</title>
+</head>
+
+<body>
+
+<h1>게시글 상세</h1>
+
+<h2 id="title"></h2>
+<p id="content"></p>
+<p>조회수: <span id="viewCount"></span></p>
+
+<button onclick="goEdit()">수정</button>
+<button onclick="deletePost()">삭제</button>
+<button onclick="goList()">목록</button>
+
+<script>
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    async function getPost(){
+        const res = await fetch(`http://localhost:8080/api/posts/${id}`);
+        const data = await res.json();
+
+        const post = data.data;
+
+        document.getElementById("title").innerText = post.title;
+        document.getElementById("content").innerText = post.content;
+        document.getElementById("viewCount").innerText = post.viewCount;
+    }
+
+    async function deletePost(){
+        await fetch(`http://localhost:8080/api/posts/${id}`,{
+            method:"DELETE"
+        });
+
+        alert("삭제되었습니다");
+        location.href="index.html";
+    }
+
+    function goEdit(){
+        location.href=`edit.html?id=${id}`;
+    }
+
+    function goList(){
+        location.href="index.html";
+    }
+
+    getPost();
+
+</script>
+
+</body>
+</html>

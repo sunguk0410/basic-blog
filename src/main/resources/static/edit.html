@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 수정</title>
+</head>
+
+<body>
+
+<h1>게시글 수정</h1>
+
+<input id="title"><br><br>
+<textarea id="content"></textarea><br><br>
+
+<button onclick="updatePost()">수정 완료</button>
+
+<script>
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    async function getPost(){
+
+        const res = await fetch(`http://localhost:8080/api/posts/${id}`);
+        const data = await res.json();
+
+        const post = data.data;
+
+        document.getElementById("title").value = post.title;
+        document.getElementById("content").value = post.content;
+    }
+
+    async function updatePost(){
+
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
+
+        try {
+            const res = await fetch(`http://localhost:8080/api/posts/${id}`,{
+                method:"PATCH",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body: JSON.stringify({
+                    title: title,
+                    content: content
+                })
+            });
+
+            if(!res.ok){
+                const error = await res.json();
+
+                const message = Object.values(error).join("\n");
+
+                alert("수정 실패:\n" + message);
+                return;
+            }
+
+            alert("수정 완료");
+            location.href=`detail.html?id=${id}`;
+
+        } catch (err) {
+            alert("서버와 통신 중 오류가 발생했습니다.");
+        }
+    }
+
+    getPost();
+
+</script>
+
+</body>
+</html>
